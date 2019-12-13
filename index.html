@@ -26,7 +26,7 @@
       <form id="invoice-form" class="border col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5 m-auto">
         <div class="form-row">
           <div class="col">
-            <h2>my-contact</h2>
+
             <div class="form-group">
               <input name="my_contact[name]" type="text" class="form-control" placeholder="name" />
               <div class="input-group">
@@ -40,23 +40,21 @@
               <input name="my_contact[email]" type="email" class="form-control" placeholder="email" / >
               <input name="my_contact[address]" type="text" class="form-control" placeholder="address" />
             </div>
-            <h2>customer-contact</h2>
             <div class="form-group">
-                <input type="text" class="form-control" placeholder="name" />
+                <input name="customer_contact[name]" type="text" class="form-control" placeholder="name" />
                 <div class="input-group">
                   <div class="input-group-prepend">
                       <span class="input-group-text">+1</span>
                   </div>
-                  <input type="text" class="form-control" placeholder="123" />
-                  <input type="text" class="form-control" placeholder="456" />
-                  <input type="text" class="form-control" placeholder="789" />
+                  <input name="customer_contact[number][first]" type="text" class="form-control" placeholder="456" />
+                  <input name="customer_contact[number][second]" type="text" class="form-control" placeholder="789" />
+                  <input name="customer_contact[number][third]" type="text" class="form-control" placeholder="123" />
                 </div>
-                <input type="email" class="form-control" placeholder="email" / >
-                <input type="text" class="form-control" placeholder="address" />
+                <input name="customer_contact[email]" type="email" class="form-control" placeholder="email" / >
+                <input name="customer_contact[address]" type="text" class="form-control" placeholder="address" />
               </div>
           </div>
           <div class="col">
-            <h2>details</h2>
             <div class="form-group">
               <input type="text" class="form-control" placeholder="title">
               <input type="date" class="form-control">
