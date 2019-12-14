@@ -1,7 +1,8 @@
 'use strict'
-import ModelBase from ''
+import ModelBase from './models/ModelBase'
 $(() => {
-  
+  const modelBase = new ModelBase({a:1, b:3})
+  console.log(modelBase)
 })
 
 
