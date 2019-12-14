@@ -6,7 +6,6 @@ class ControllerBase {
     this._route = base.getRoute(this._pluralName)
     this[`_${this._pluralName}`] = []
     this._model = require(`../models/${this._name}`)
-    this.init()
   }
 
   find(id) {
@@ -14,20 +13,39 @@ class ControllerBase {
   }
 
   all() {
-    // find my controller I belong to
-    // link then link the model to the other model
-    // I need id here but this is a public plural class
-
-    console.log('this',this)
-    if (this._model.belongsTo) {
-      this[`_${this._pluralName}`].forEach(model => {
-        console.log(model)
-      })
-    } else {
-      return this[`_${this._pluralName}`]
-    }
+    return this[`_${this._pluralName}`]
   }
 
+  // filter(prop, val) {
+  //   console.log(prop,val)
+  //   // return this[`_${this._pluralName}`].map(model => model.id)
+  //   console.log(this[`_${this._pluralName}`])
+  //   return this[`_${this._pluralName}`].length
+  // }
+  async setUpModels() {
+    if (this._model.hasMany) {
+      const hasMany = this._model.hasMany
+      hasMany.forEach( has => {
+        const hasController = require(`./${base.pluralize.singular(has)}_controller`)
+        hasController.setUpModels().then(console.log)
+        this.init()
+        this._model.prototype[has] = function () {
+          return hasController.filter(this.id)
+        }
+      })
+    }
+    if (this._model.belongsTo) {
+      const belongsTo = this._model.belongsTo
+      this.filter = async function (id) {
+        await this.init()
+        return this[`_${this._pluralName}`]
+      }
+      this._model.prototype[belongsTo] = function () {
+        console.log(this)
+      }
+    }
+    return 'asdf'
+  }
   async init() {
     let res
     try {
@@ -37,34 +55,14 @@ class ControllerBase {
       console.error(e)
       res = {}
     }
-    // not under dashed because this is from the response
     const models = res[this._pluralName]
-    // checks if the model has many and is an array
-    if (this._model.belongsTo) {
-      const parent = this._model.belongsTo
-      const parentController = require(`./${this._model.belongsTo}_controller`)
-      models.forEach(model => {
-        const parentModel = parentController.find(model[`${parent}_id`])
-        model[parent] = parentModel
-      })
-      this.create(models)
-    }
-    if (this._model.hasMany) {
-      // delegate this to my model
-      this.create(models)
-    }
-    
+    this.create(models)
   }
   create(models) {
     for (const key in models) {
       const model = new this._model(models[key])
       this[`_${this._pluralName}`].push(model)
     }
-  }
-  createHasMany(models) {
-    this._model.hasMany.forEach( hasMany => {
-      this._model.prototype[hasMany] = require(`./${base.pluralize.singular(hasMany)}_controller`)
-    })
   }
 }
 
