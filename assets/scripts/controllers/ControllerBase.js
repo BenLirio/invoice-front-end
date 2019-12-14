@@ -24,10 +24,18 @@ class ControllerBase {
     }
     // not under dashed because this is from the response
     const models = res[this._pluralName]
-    if (this._model._belongsTo) {
+    // checks if the model has many and is an array
+    if (this._model.belongsTo) {
       this.createBelongsTo(models)
     } else {
       this.create(models)
+    }
+
+
+    if (this._model.hasMany) {
+      this._model.hasMany.forEach( hasMany => {
+        this[hasMany] = require(`./${base.pluralize.singular(hasMany)}_controller`)
+      })
     }
   }
   create(models) {

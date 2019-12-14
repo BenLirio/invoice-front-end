@@ -8,7 +8,7 @@
 const invoiceEvents = require('./invoices/events')
 const userController = require('./controllers/UserController')
 setTimeout(() => {
-  console.log(userController.invoices)
+  console.log(userController.invoices.items.all())
 }, 2000)
 $(() => {
   

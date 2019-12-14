@@ -1,5 +1,17 @@
 const base = require('./helper/base')
 class ModelBase {
+  static get hasMany() {
+    return this._hasMany
+  }
+  static set hasMany(v) {
+    this._hasMany = v
+  }
+  static get belongsTo() {
+    return this._belongsTo
+  }
+  static set belongsTo(v) {
+    this._belongsTo = v
+  }
   constructor(properties) {
     Object.assign(this, properties)
     this._name = base.normalize(this.constructor.name)
@@ -31,5 +43,4 @@ class ModelBase {
     this._lastUpdated = Date.now()
   }
 }
-
 module.exports = ModelBase
