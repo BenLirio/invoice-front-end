@@ -1,19 +1,38 @@
+const showItemTemplate = require('../templates/item.handlebars')
+const api = require('./api')
 const getFormFields = require('../../../lib/get-form-fields')
-class Events {
+class InvoiceEvents {
   constructor() {
-    this.listenToInvoiceForm()
+    this.listenToSubmitForm()
+    this.listenToAddItemButton()
   }
-  listenToInvoiceForm() {
-    $('#invoice-form').on('submit', this.submitInvoiceForm)
+  listenToSubmitForm() {
+    $('#invoice-form').on('submit', this.onSubmitForm)
   }
-  submitInvoiceForm(event) {
+  onSubmitForm(event) {
     event.preventDefault()
     const target = event.target
     const data = getFormFields(target)
-    console.log(data)
+    api.createInvoice(data)
+  }
+  listenToAddItemButton() {
+    $('#add-item-btn').on('click', this.onClickAddItemButton)
+  }
+  onClickAddItemButton(event) {
+    const target = event.target
+    const item = {}
+    target.parentNode.parentNode.childNodes.forEach(node => {
+      if (node.dataset && node.dataset.item) {
+        item[node.dataset.item] = node.value
+        node.value = ''
+      }
+    })
+    // const template = Handlebars.compile('<p>{{description}} {{unit_price}} {{quantity}}</p>')
+    const numItems = $('#items-container .input-group').length
+    item.num = numItems
+    const itemHtml = showItemTemplate(item)
+    $('#items-container').prepend(itemHtml)
   }
 }
 
-
-
-module.exports = new Events
+module.exports = new InvoiceEvents

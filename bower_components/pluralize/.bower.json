@@ -1,0 +1,37 @@
+{
+  "name": "pluralize",
+  "description": "Pluralize and singularize any word",
+  "main": "pluralize.js",
+  "keywords": [
+    "plural",
+    "plurals",
+    "pluralize",
+    "singular",
+    "singularize"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/blakeembrey/pluralize",
+  "authors": [
+    "Blake Embrey <hello@blakeembrey.com>"
+  ],
+  "moduleType": [
+    "globals",
+    "amd",
+    "node"
+  ],
+  "ignore": [
+    "/.*",
+    "test.js"
+  ],
+  "version": "8.0.0",
+  "_release": "8.0.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "v8.0.0",
+    "commit": "5e6297eb40bdd6f2d6dc1512419e0854dbaaad1b"
+  },
+  "_source": "https://github.com/blakeembrey/pluralize.git",
+  "_target": "^8.0.0",
+  "_originalSource": "pluralize",
+  "_direct": true
+}
