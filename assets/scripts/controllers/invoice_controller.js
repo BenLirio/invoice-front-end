@@ -1,10 +1,5 @@
-const ControllerBase = require('./ControllerBase')
-
-
-class InvoiceController extends ControllerBase {
-  constructor() {
-    super()
-  }
+'use strict'
+import ControllerBase from './ControllerBase'
+export default class InvoiceController extends ControllerBase {
+  
 }
-
-module.exports = new InvoiceController

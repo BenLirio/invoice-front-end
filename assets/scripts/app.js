@@ -1,8 +1,8 @@
 'use strict'
-import ModelBase from './models/ModelBase'
+import Invoice from './models/invoice'
 $(() => {
-  const modelBase = new ModelBase({a:1, b:3})
-  console.log(modelBase)
+  const invoice = new Invoice({a:1, b:3})
+  console.log(invoice)
 })
 
 
