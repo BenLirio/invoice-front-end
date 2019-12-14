@@ -6,9 +6,10 @@
 // use require without a reference to ensure a file is bundled
 // require('./example')
 const invoiceEvents = require('./invoices/events')
-const Item = require('./models/item')
-const item = new Item(1)
-item.requestUpdate()
+const userController = require('./controllers/UserController')
+setTimeout(() => {
+  console.log(userController.invoices)
+}, 2000)
 $(() => {
   
 })

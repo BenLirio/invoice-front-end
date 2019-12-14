@@ -1,10 +1,7 @@
-const ActiveModel = require('./ActiveModel')
-class Contact extends ActiveModel {
-  constructor() {
-    this.name = name
-    this.number = number
-    this.email = email
-    this.address = address
+const ModelBase = require('./ModelBase')
+class Contact extends ModelBase {
+  constructor(properties) {
+    super(properties)
   }
 }
 

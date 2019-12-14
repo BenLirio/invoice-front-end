@@ -1,10 +1,8 @@
-const ActiveModel = require('./ActiveModel')
-class Item extends ActiveModel {
-  constructor(id) {
-    super(id)
-    this.description = 0
-    this.unit_price = 0
-    this.quantity = 0
+const ModelBase = require('./ModelBase')
+class Item extends ModelBase {
+  constructor(properties) {
+    super(properties)
+    this._belongsTo = 'invoice'
   }
 }
 
