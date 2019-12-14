@@ -4,13 +4,28 @@ class ControllerBase {
     this._name = base.getName(this.constructor.name)
     this._pluralName = base.pluralize(this._name)
     this._route = base.getRoute(this._pluralName)
-    this[`_${this._pluralName}`] = new Array
+    this[`_${this._pluralName}`] = []
     this._model = require(`../models/${this._name}`)
     this.init()
   }
 
+  find(id) {
+    return this[`_${this._pluralName}`].find(model => model.id === id)
+  }
+
   all() {
-    return this[`_${this._pluralName}`]
+    // find my controller I belong to
+    // link then link the model to the other model
+    // I need id here but this is a public plural class
+
+    console.log('this',this)
+    if (this._model.belongsTo) {
+      this[`_${this._pluralName}`].forEach(model => {
+        console.log(model)
+      })
+    } else {
+      return this[`_${this._pluralName}`]
+    }
   }
 
   async init() {
@@ -26,17 +41,19 @@ class ControllerBase {
     const models = res[this._pluralName]
     // checks if the model has many and is an array
     if (this._model.belongsTo) {
-      this.createBelongsTo(models)
-    } else {
+      const parent = this._model.belongsTo
+      const parentController = require(`./${this._model.belongsTo}_controller`)
+      models.forEach(model => {
+        const parentModel = parentController.find(model[`${parent}_id`])
+        model[parent] = parentModel
+      })
       this.create(models)
     }
-
-
     if (this._model.hasMany) {
-      this._model.hasMany.forEach( hasMany => {
-        this[hasMany] = require(`./${base.pluralize.singular(hasMany)}_controller`)
-      })
+      // delegate this to my model
+      this.create(models)
     }
+    
   }
   create(models) {
     for (const key in models) {
@@ -44,11 +61,10 @@ class ControllerBase {
       this[`_${this._pluralName}`].push(model)
     }
   }
-  createBelongsTo(models) {
-    for (const key in models) {
-      const model = new this._model(models[key])
-      this[`_${this._pluralName}`].push(model)
-    }
+  createHasMany(models) {
+    this._model.hasMany.forEach( hasMany => {
+      this._model.prototype[hasMany] = require(`./${base.pluralize.singular(hasMany)}_controller`)
+    })
   }
 }
 
