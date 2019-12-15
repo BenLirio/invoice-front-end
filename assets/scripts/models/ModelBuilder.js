@@ -1,12 +1,12 @@
 'use strict'
 import _ from 'lodash'
-export default class ModelBuilder {
-  constructor(data) {
-    this.build(data)
+export function build(data) {
+  for (const model in data) {
+    ModelFactory.create(model)
   }
-  build(data) {
-    for (const key in data) {
-      if (data[key] !== null && )
-    }
-  }
+}
+
+
+function ModelFactory() {
+  
 }

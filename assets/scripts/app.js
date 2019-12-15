@@ -1,8 +1,17 @@
 'use strict'
-import ModelBuilder from './models/ModelBuilder'
+import { build } from './models/ModelBuilder'
+const init = async function() {
+  const data = await $.ajax({url:'http://localhost:4741/invoices'})
+
+  return data
+}
+init()
+.then(res => {
+  build(res)
+})
+
 
 $(() => {
-  console.log(ModelBuilder)
 
 })
 
