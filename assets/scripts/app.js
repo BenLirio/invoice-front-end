@@ -1,8 +1,12 @@
 'use strict'
 import { build } from './mvc/build'
+import { store } from './store'
 
 $(() => {
   build('invoices')
+  $('.btn-primary').on('click',event => {
+    event.preventDefault()
+  })
 })
 
 

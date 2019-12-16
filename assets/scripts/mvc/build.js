@@ -22,17 +22,11 @@ function requestModels(pluralName) {
 function receivedModels(res, pluralName) {
   const singularName = singularize(pluralName)
   const formatedRes = format(res, pluralName)
-  buildControllers(singularName, getDependencies(formatedRes[0]))
-  modelFactory.buildModels(formatedRes)
+  const belongsTo = getBelongsTo(formatedRes[0])
+  const hasMany = getHasMany(formatedRes[0])
+  controllerFactory.buildControllers(singularName, {belongsTo, hasMany})
+  modelFactory.buildModels(formatedRes, {belongsTo, hasMany})
   console.log(store)
-}
-function buildControllers(singularName, dependencies) {
-  console.log(singularName, dependencies)
-  controllerFactory.buildController(singularName)
-  dependencies.forEach(dependency => {
-    controllerFactory.buildController
-  })
-  
 }
 
 
@@ -73,7 +67,7 @@ function privatize(models) {
   })
 }
 
-function getDependencies(model) {
+function getBelongsTo(model) {
   const idExpression = /^.+_id$/
   let belongsTo = []
   _.keys(model).forEach(property => {
@@ -82,4 +76,11 @@ function getDependencies(model) {
     }
   })
   return belongsTo
+}
+function getHasMany(model) {
+  if (model._has_many) {
+    return model._has_many.map(modelName => singularize(modelName))
+  } else {
+    return []
+  }
 }
