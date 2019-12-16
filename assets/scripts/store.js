@@ -1,6 +1,7 @@
 'use strict'
-
-const store = {
+export const store = {
+  models: {},
+  controllers: {}
 }
 
-module.exports = store
+
