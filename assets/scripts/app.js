@@ -1,11 +1,12 @@
 'use strict'
-import { build } from './mvc/build'
+import { requestModels } from './mvc/build'
 import { store } from './store'
 
 $(() => {
-  build('invoices')
+  requestModels('invoices').then(console.log)
   $('.btn-primary').on('click',event => {
     event.preventDefault()
+    console.log(store.models.invoices[16].items)
   })
 })
 

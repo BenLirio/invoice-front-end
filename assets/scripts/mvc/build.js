@@ -4,29 +4,44 @@ import { ModelFactory } from './models/ModelFactory'
 import { singular as singularize, plural as pluralize } from 'pluralize'
 import { store } from '../store'
 import { apiUrl } from '../config'
+import { request } from 'http'
 
 const controllerFactory = new ControllerFactory()
 const modelFactory = new ModelFactory()
 
+export const requestModels = async function requestModels(pluralName) {
+  // PAUSE HERE UNTIL RESPONSE FROM SERVER
+  const res = await $.ajax({url:`http://localhost:4741/${pluralName}`})
 
-export function build(pluralName) {
-  requestModels(pluralName)
-    .then( res => {
-      receivedModels(res, pluralName)
-    })
-}
-function requestModels(pluralName) {
-  return $.ajax({url:`http://localhost:4741/${pluralName}`})
-}
-
-function receivedModels(res, pluralName) {
+  // Format
   const singularName = singularize(pluralName)
   const formatedRes = format(res, pluralName)
+
+  // Build Controller
+  const controller = controllerFactory.buildController(singularName)
+
+  // Get relations
   const belongsTo = getBelongsTo(formatedRes[0])
   const hasMany = getHasMany(formatedRes[0])
-  controllerFactory.buildControllers(singularName, {belongsTo, hasMany})
-  modelFactory.buildModels(formatedRes, {belongsTo, hasMany})
-  console.log(store)
+  for(let i = 0; i < hasMany.length; i++) {
+    const has = hasMany[i]
+    if (!store.controllers[singularize(has)]) {
+      await requestModels(has)
+    }
+  }
+  for(let i = 0; i < belongsTo.length; i++) {
+    const belongs = belongsTo[i]
+    if (!store.controllers[belongs]) {
+      await requestModels(pluralize(belongs))
+    }
+  }
+
+  // Back to top
+  controllerFactory.addAssociations(singularName, {belongsTo, hasMany})
+  setTimeout(()=> {
+    controller.buildModels(formatedRes)
+  },0)
+  return store
 }
 
 
@@ -38,9 +53,12 @@ function format(res, name) {
   assignUrl(models, name)
   return models
 }
-function assignUrl(models, name) {
+function privatize(models) {
   models.forEach( model => {
-    model._url = `${apiUrl}/${model._pluralName}/${model._id}`
+    _.keys(model).forEach( key => {
+      model[`_${key}`] = model[key]
+      delete model[key]
+    })
   })
 }
 function assignNames(models, name) {
@@ -53,19 +71,13 @@ function assignNames(models, name) {
   })
   return models
 }
-
-function getName(res) {
-  return singularize(_.keys(res)[0])
-}
-
-function privatize(models) {
+function assignUrl(models) {
   models.forEach( model => {
-    _.keys(model).forEach( key => {
-      model[`_${key}`] = model[key]
-      delete model[key]
-    })
+    model._url = `${apiUrl}/${model._pluralName}/${model._id}`
   })
 }
+
+
 
 function getBelongsTo(model) {
   const idExpression = /^.+_id$/
@@ -78,9 +90,5 @@ function getBelongsTo(model) {
   return belongsTo
 }
 function getHasMany(model) {
-  if (model._has_many) {
-    return model._has_many.map(modelName => singularize(modelName))
-  } else {
-    return []
-  }
+  return (model._has_many || [])
 }
