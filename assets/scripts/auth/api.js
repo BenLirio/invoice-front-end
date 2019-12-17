@@ -1,6 +1,6 @@
 import { apiUrl } from '../config'
 export const signUp = function (data) {
-  console.log(data)
+
   return postRequest('sign-up', data)
 }
 

@@ -8,41 +8,53 @@ const controllerFactory = new ControllerFactory()
 
 export const requestModels = async function requestModels(pluralName) {
   // PAUSE HERE UNTIL RESPONSE FROM SERVER
-  const res = await $.ajax({url:`http://localhost:4741/${pluralName}`})
+  const res = await $.ajax({
+    url:`http://localhost:4741/${pluralName}`})
   // Format
 
     const singularName = singularize(pluralName)
     const formatedRes = format(res, pluralName)
 
     // Build Controller
-    const controller = controllerFactory.buildController(singularName)
-    if(res[pluralName].length !== 0) {
-    // Get relations
-    const belongsTo = getBelongsTo(formatedRes[0])
-    const hasMany = getHasMany(formatedRes[0])
-    for(let i = 0; i < hasMany.length; i++) {
-      const has = hasMany[i]
-      if (!store.controllers[singularize(has)]) {
-        await requestModels(has)
+    let controller
+    if(!controllerFactory.controllerExists(singularName)) {
+
+      controller = controllerFactory.buildController(singularName)
+      if(res[pluralName].length !== 0) {
+        // Get relations
+        const belongsTo = getBelongsTo(formatedRes[0])
+        const hasMany = getHasMany(formatedRes[0])
+        for(let i = 0; i < hasMany.length; i++) {
+          const has = hasMany[i]
+          if (!store.controllers[singularize(has)]) {
+            await requestModels(has)
+          }
+        }
+        for(let i = 0; i < belongsTo.length; i++) {
+          const belongs = belongsTo[i]
+          formatedRes.forEach(model => {
+            delete model[belongs]
+          })
+          if (!store.controllers[belongs]) {
+            await requestModels(pluralize(belongs))
+          }
+        }
+      
+        // Back to top
+        controllerFactory.addAssociations(singularName, {belongsTo, hasMany})
+        setTimeout(()=> {
+          controller.buildModels(formatedRes)
+        },0)
       }
+    } else {
+
+      controller = store.controllers[singularName]
+      setTimeout(()=> {
+        controller.buildModels(formatedRes)
+      },0)
     }
-    for(let i = 0; i < belongsTo.length; i++) {
-      const belongs = belongsTo[i]
-      formatedRes.forEach(model => {
-        delete model[belongs]
-      })
-      if (!store.controllers[belongs]) {
-        await requestModels(pluralize(belongs))
-      }
-    }
-  
-    // Back to top
-    controllerFactory.addAssociations(singularName, {belongsTo, hasMany})
-    setTimeout(()=> {
-      controller.buildModels(formatedRes)
-    },0)
   }
-}
+
 
 
 

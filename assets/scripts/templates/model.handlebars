@@ -1,0 +1,10 @@
+<div id="{{name}}-{{id}}">
+<h3>{{user}}'s {{name}}</h3>
+<form>
+  {{#each data as |param|}}
+    {{@key}}
+    <input name="{{@key}}" type="text" value="{{param}}">
+  {{/each}}
+</form>
+</div>
+

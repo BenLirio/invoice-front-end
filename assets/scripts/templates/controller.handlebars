@@ -2,7 +2,7 @@
   <h2>{{name}}_controller</h2>
   <form id="{{name}}">
     {{#each params as |param|}}
-     <input name="{{../name}}[{{@key}}]" type="text" placeholder="{{@key}}">
+     <input name="{{../name}}[{{@key}}]" type="text" placeholder="{{@key}}" required>
     {{/each}}
     <input type="submit" value="create">
   </form>

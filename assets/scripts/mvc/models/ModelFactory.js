@@ -23,17 +23,17 @@ export class ModelFactory {
       _.keys(res[this.name]).forEach( key => {
         if(/id/.test(key)){
           res[this.name]._id = res[this.name].id
-          
           delete res[this.name].id
-
         }
         if(key === 'has_many') {
           delete res[this.name][key]
         }
       })
-      res._singularName = this.name
-      res._pluralName = pluralize(this.name)
-      this.buildModel(res)
+      res[this.name]._singularName = this.name
+      res[this.name]._pluralName = pluralize(this.name)
+      res[this.name]._url = `${apiUrl}/${res[this.name]._pluralName}/${res[this.name]._id}`
+
+      this.buildModel(res[this.name])
     })
   }
 
@@ -42,7 +42,7 @@ export class ModelFactory {
     modelsData.forEach( modelData => {
       const id = modelData._id
       const pluralName = modelData._pluralName
-      if(!this.modelExists(id, pluralName)) {
+      if(!store.models[modelData._pluralName][id]) {
         this.buildModel(modelData)
       }
     })
@@ -81,16 +81,7 @@ export class ModelFactory {
         Object.defineProperty(model, key, { get: function() { return this[`_${key}`]} })
       }
     })
-    console.log(modelData._id)
     store.models[modelData._pluralName][modelData._id] = model
-  }
-  modelExists(id, pluralName) {
-    _.keys(store.models[pluralName]).forEach( key => {
-      if(key === id) {
-        return true
-      }
-    })
-    return false
   }
 }
 

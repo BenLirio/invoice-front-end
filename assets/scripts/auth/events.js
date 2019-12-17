@@ -4,6 +4,7 @@ import { store } from '../store'
 import { showMain, showSignIn } from './ui'
 import { requestModels } from '../mvc/build'
 import { request } from 'http'
+import { apiUrl } from '../config'
 const EventHandler = function() {
   this.listenToSignUp()
   this.listenToSignIn()
@@ -27,7 +28,7 @@ EventHandler.prototype.onSignUp = function(event) {
 }
 EventHandler.prototype.onSignOut = function() {
   document.cookie = ''
-  store.token = ''
+  store.user = ''
   showSignIn()
 }
 EventHandler.prototype.onSignIn = function(event) {
@@ -35,14 +36,30 @@ EventHandler.prototype.onSignIn = function(event) {
   signIn(data)
     .then(res => {
       document.cookie = res.user.token
-      this.storeToken()
+      this.storeToken(res.user)
       showMain()
     })
 }
 
-EventHandler.prototype.storeToken = function () {
-  store.token = document.cookie
-  requestModels('worlds')
+EventHandler.prototype.storeToken = function (user) {
+  store.user = user
+  store.user.token = document.cookie
+  
+  // $.ajax({
+  //   url: apiUrl + '/worlds',
+  //   method: 'POST',
+  //   headers: {
+  //     "Authorization": `Token token=${document.cookie}`
+  //   },
+  //   data: {
+  //     world: {
+  //       name: 'hello'
+  //     }
+  //   }
+  // }).then(res=> {
+  //   
+  // })
+  
 }
 
 

@@ -2,6 +2,8 @@ import { store } from '../../store'
 import { plural as pluralize } from 'pluralize'
 import { ModelFactory } from '../models/ModelFactory'
 const getFormFields = require('../../../../lib/get-form-fields')
+import { requestModels } from '../build'
+
 export class Controller {
   constructor(name) {
     this.name = name
@@ -10,6 +12,10 @@ export class Controller {
     store.models[pluralize(name)] = {}
     this.models = store.models[pluralize(name)]
     this.controllerTemplate = require('../../templates/controller.handlebars')
+    $('#models').on('click', '.delete-btn', event => {
+      this.models[event.target.dataset.id].delete()
+    })
+    setInterval(()=>requestModels(pluralize(this.name)), 3000)
   }
   displayController(params) {
     this.controllerHtml = this.controllerTemplate({
