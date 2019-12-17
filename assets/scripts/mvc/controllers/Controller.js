@@ -6,10 +6,12 @@ export class Controller {
     this.name = name
     this.modelFactory = new ModelFactory(name)
     this.associations = {}
-    const models = {}
-    store.models[pluralize(name)] = models
-    this.models = models
+    store.models[pluralize(name)] = {}
+    this.models = store.models[pluralize(name)]
     
+  }
+  create(data) {
+    this.modelFactory.create(data)
   }
   buildModels(models) {
     this.modelFactory.buildModels(models)

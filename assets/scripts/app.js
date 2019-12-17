@@ -6,7 +6,8 @@ $(() => {
   requestModels('invoices').then(console.log)
   $('.btn-primary').on('click',event => {
     event.preventDefault()
-    console.log(store.controllers.invoice.all()[0].sendUpdate())
+    console.log(store.controllers.invoice.create())
+    console.log(store.controllers.invoice.all())
   })
 })
 

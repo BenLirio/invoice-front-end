@@ -3,13 +3,26 @@ import _ from 'lodash'
 import { store } from '../../store'
 import { Model } from './Model'
 import { plural as pluralize, isPlural, singular as singularize } from 'pluralize'
+import { apiUrl } from '../../config'
 
 
 export class ModelFactory {
   constructor(name) {
     this.name = name
     this.associations = {}
+    this._url = `${apiUrl}/${pluralize(this.name) || ''}`
+    this.params = null
   }
+
+  create(data = this.params) {
+    console.log(data)
+    $.ajax({
+      url: this._url,
+      method: 'POST'
+    })
+  }
+
+
   buildModels(modelsData) {
     modelsData.forEach( modelData => {
       const id = modelData._id
@@ -20,12 +33,22 @@ export class ModelFactory {
     })
   }
   buildModel(modelData) {
+    if(this.params === null) {
+      this.params = {}
+      this.params[modelData._singularName] = {}
+      _.keys(modelData).filter(key => !/^_/.test(key)).forEach(key => {
+        this.params[modelData._singularName][key] = null
+      })
+    }
     const model = new Model(modelData)
     const myAssociations = store.controllers[model._singularName].associations
     _.keys(this.associations).forEach( key => {
       const foreignAssociations = store.controllers[singularize(key)].associations
       if(isPlural(key)) {
         // Create local model in my controller
+        if(!myAssociations[model._singularName][model._id]) {
+          myAssociations[model._singularName][model._id] = {}
+        }
         Object.assign(myAssociations[model._singularName][model._id], model)
         // point my model to foreign controller
         model[`_${key}`] = foreignAssociations[key][model._id]
@@ -44,7 +67,6 @@ export class ModelFactory {
     })
     store.models[modelData._pluralName][modelData._id] = model
   }
-
   modelExists(id, pluralName) {
     _.keys(store.models[pluralName]).forEach( key => {
       if(key === id) {

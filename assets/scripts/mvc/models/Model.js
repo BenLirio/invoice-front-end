@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import { store } from '../../store'
 
 export class Model {
   constructor(params = {}) {
@@ -12,12 +13,21 @@ export class Model {
     })
     return data
   }
-  sendUpdate() {
+  save() {
     $.ajax({
       url: this._url,
       method: 'PUT',
       data: this._getData()
     })
     return this
+  }
+  delete() {
+    // delete store.controllers
+    delete store.models[this._pluralName][this._id]
+    $.ajax({
+      url: this._url,
+      method: 'DELETE'
+    })
+
   }
 }
