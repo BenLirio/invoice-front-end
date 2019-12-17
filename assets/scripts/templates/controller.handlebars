@@ -1,0 +1,9 @@
+<div class="controller border">
+  <h2>{{name}}_controller</h2>
+  <form id="{{name}}">
+    {{#each params as |param|}}
+     <input name="{{../name}}[{{@key}}]" type="text" placeholder="{{@key}}">
+    {{/each}}
+    <input type="submit" value="create">
+  </form>
+</div>

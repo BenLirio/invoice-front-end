@@ -3,7 +3,6 @@ import { ControllerFactory } from './controllers/ControllerFactory'
 import { singular as singularize, plural as pluralize } from 'pluralize'
 import { store } from '../store'
 import { apiUrl } from '../config'
-import { request } from 'http'
 
 const controllerFactory = new ControllerFactory()
 
@@ -11,13 +10,13 @@ export const requestModels = async function requestModels(pluralName) {
   // PAUSE HERE UNTIL RESPONSE FROM SERVER
   const res = await $.ajax({url:`http://localhost:4741/${pluralName}`})
   // Format
-  if(res[pluralName].length !== 0) {
+
     const singularName = singularize(pluralName)
     const formatedRes = format(res, pluralName)
 
     // Build Controller
     const controller = controllerFactory.buildController(singularName)
-  
+    if(res[pluralName].length !== 0) {
     // Get relations
     const belongsTo = getBelongsTo(formatedRes[0])
     const hasMany = getHasMany(formatedRes[0])

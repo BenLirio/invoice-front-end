@@ -1,6 +1,7 @@
 import { store } from '../../store'
 import { plural as pluralize } from 'pluralize'
 import { ModelFactory } from '../models/ModelFactory'
+const getFormFields = require('../../../../lib/get-form-fields')
 export class Controller {
   constructor(name) {
     this.name = name
@@ -8,7 +9,22 @@ export class Controller {
     this.associations = {}
     store.models[pluralize(name)] = {}
     this.models = store.models[pluralize(name)]
-    
+    this.controllerTemplate = require('../../templates/controller.handlebars')
+  }
+  displayController(params) {
+    this.controllerHtml = this.controllerTemplate({
+      name: this.name,
+      params
+    })
+    $('#controllers').append(this.controllerHtml)
+    $('#' + this.name).on('submit', e => {
+      this.formSubmit(e)
+    })
+  }
+  formSubmit(e) {
+    e.preventDefault()
+    const data = getFormFields(e.target)
+    this.create(data)
   }
   create(data) {
     this.modelFactory.create(data)

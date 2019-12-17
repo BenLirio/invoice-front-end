@@ -15,10 +15,25 @@ export class ModelFactory {
   }
 
   create(data = this.params) {
-    console.log(data)
     $.ajax({
       url: this._url,
-      method: 'POST'
+      method: 'POST',
+      data
+    }).then(res => {
+      _.keys(res[this.name]).forEach( key => {
+        if(/id/.test(key)){
+          res[this.name]._id = res[this.name].id
+          
+          delete res[this.name].id
+
+        }
+        if(key === 'has_many') {
+          delete res[this.name][key]
+        }
+      })
+      res._singularName = this.name
+      res._pluralName = pluralize(this.name)
+      this.buildModel(res)
     })
   }
 
@@ -37,8 +52,9 @@ export class ModelFactory {
       this.params = {}
       this.params[modelData._singularName] = {}
       _.keys(modelData).filter(key => !/^_/.test(key)).forEach(key => {
-        this.params[modelData._singularName][key] = null
+        this.params[modelData._singularName][key] = typeof key
       })
+      store.controllers[modelData._singularName].displayController(this.params[modelData._singularName])
     }
     const model = new Model(modelData)
     const myAssociations = store.controllers[model._singularName].associations
@@ -65,6 +81,7 @@ export class ModelFactory {
         Object.defineProperty(model, key, { get: function() { return this[`_${key}`]} })
       }
     })
+    console.log(modelData._id)
     store.models[modelData._pluralName][modelData._id] = model
   }
   modelExists(id, pluralName) {
