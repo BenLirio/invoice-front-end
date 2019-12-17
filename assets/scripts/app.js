@@ -6,7 +6,7 @@ $(() => {
   requestModels('invoices').then(console.log)
   $('.btn-primary').on('click',event => {
     event.preventDefault()
-    console.log(store.models.invoices[16]._items)
+    console.log(store.models.invoices[16].items[0].invoice)
   })
 })
 

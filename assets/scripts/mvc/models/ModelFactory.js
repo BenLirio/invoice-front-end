@@ -29,6 +29,7 @@ export class ModelFactory {
         Object.assign(myAssociations[model._singularName][model._id], model)
         // point my model to foreign controller
         model[`_${key}`] = foreignAssociations[key][model._id]
+        Object.defineProperty(model, key, { get: function() { return this[`_${key}`]} })
       } else {
         if(!myAssociations[model._pluralName][model[`_${key}_id`]]) {
           myAssociations[model._pluralName][model[`_${key}_id`]] = []
@@ -37,7 +38,8 @@ export class ModelFactory {
         if(!foreignAssociations[key][model[`_${key}_id`]]) {
           foreignAssociations[key][model[`_${key}_id`]] = {}
         }
-        model[key] = foreignAssociations[key][model[`_${key}_id`]]
+        model[`_${key}`] = foreignAssociations[key][model[`_${key}_id`]]
+        Object.defineProperty(model, key, { get: function() { return this[`_${key}`]} })
       }
     })
     store.models[modelData._pluralName][modelData._id] = model
