@@ -14,14 +14,4 @@ export class Controller {
   buildModels(models) {
     this.modelFactory.buildModels(models)
   }
-  buildHasManyAssociation(model, key) {
-    if(this.associations[key]) {
-      this.associations[key][model._id] = model 
-    } else {
-      this.associations[key] = {}
-      this.associations[key][model._id] = model
-    }
-
-    return this.associations[key][model._id]
-  }
 }

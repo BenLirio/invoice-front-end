@@ -12,9 +12,11 @@ export class ControllerFactory {
   }
   addAssociations(name, associations) {
     associations.belongsTo.forEach(belongs => {
+      store.controllers[name].associations[pluralize(name)] = {}
       store.controllers[name].modelFactory.associations[belongs] = store.controllers[belongs]
     })
     associations.hasMany.forEach(has => {
+      store.controllers[name].associations[name] = {}
       store.controllers[name].modelFactory.associations[has] = store.controllers[singularize(has)]
     })
   }
