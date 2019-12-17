@@ -14,4 +14,7 @@ export class Controller {
   buildModels(models) {
     this.modelFactory.buildModels(models)
   }
+  all() {
+    return _.keys(this.models).map(key => this.models[key])
+  }
 }

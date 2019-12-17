@@ -31,6 +31,9 @@ export const requestModels = async function requestModels(pluralName) {
   }
   for(let i = 0; i < belongsTo.length; i++) {
     const belongs = belongsTo[i]
+    formatedRes.forEach(model => {
+      delete model[belongs]
+    })
     if (!store.controllers[belongs]) {
       await requestModels(pluralize(belongs))
     }
@@ -41,7 +44,6 @@ export const requestModels = async function requestModels(pluralName) {
   setTimeout(()=> {
     controller.buildModels(formatedRes)
   },0)
-  return store
 }
 
 
@@ -56,8 +58,11 @@ function format(res, name) {
 function privatize(models) {
   models.forEach( model => {
     _.keys(model).forEach( key => {
-      model[`_${key}`] = model[key]
-      delete model[key]
+      if(key === 'id' || /_id$/.test(key) || key === 'has_many') {
+        
+        model[`_${key}`] = model[key]
+        delete model[key]
+      }
     })
   })
 }
